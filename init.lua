@@ -4,3 +4,4 @@
 -- Import other files
 require('options')        
 require('keymaps')
+require('plugins')
