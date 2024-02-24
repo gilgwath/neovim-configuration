@@ -11,11 +11,14 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-require("lazy").setup(plugins, opts)
-
-
 local plugin_specs = {
-
+   -- Automatic insertion and deletion of a pair of characters
+    {
+    'windwp/nvim-autopairs',
+    event = "InsertEnter",
+    opts = {} -- this is equalent to setup({}) function
+    },
+    { 'tanvirtin/monokai.nvim' }
 }
 
 -- configuration for lazy itself.
