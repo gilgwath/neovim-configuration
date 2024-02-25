@@ -69,6 +69,26 @@ local plugin_specs = {
       require("config.bqf")
     end,
   },
+
+  -- Status line at the bottom
+  {
+    "nvim-lualine/lualine.nvim",
+    event = "VeryLazy",
+    cond = firenvim_not_active,
+    config = function()
+      require("config.statusline")
+    end,
+  },
+ 
+  {
+    "akinsho/bufferline.nvim",
+    event = { "BufEnter" },
+    cond = firenvim_not_active,
+    config = function()
+      require("config.bufferline")
+    end,
+  },
+
 }
 
 -- configuration for lazy itself.
