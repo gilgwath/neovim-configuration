@@ -1,59 +1,75 @@
 local fn = vim.fn
+local api = vim.api
 
-local M = {}
+local utils = require('utils')
 
-function M.executable(name)
-  if fn.executable(name) > 0 then
-    return true
+-- Inspect something
+function _G.inspect(item)
+  vim.print(item)
+end
+
+------------------------------------------------------------------------
+--                          custom variables                          --
+------------------------------------------------------------------------
+vim.g.is_win = (utils.has("win32") or utils.has("win64")) and true or false
+vim.g.is_linux = (utils.has("unix") and (not utils.has("macunix"))) and true or false
+vim.g.is_mac  = utils.has("macunix") and true or false
+
+vim.g.logging_level = "info"
+
+------------------------------------------------------------------------
+--                         builtin variables                          --
+------------------------------------------------------------------------
+vim.g.loaded_perl_provider = 0  -- Disable perl provider
+vim.g.loaded_ruby_provider = 0  -- Disable ruby provider
+vim.g.loaded_node_provider = 0  -- Disable node provider
+vim.g.did_install_default_menus = 1  -- do not load menu
+
+if utils.executable('python3') then
+  if vim.g.is_win then
+    vim.g.python3_host_prog = fn.substitute(fn.exepath("python3"), ".exe$", '', 'g')
+  else
+    vim.g.python3_host_prog = fn.exepath("python3")
   end
-
-  return false
+else
+  api.nvim_err_writeln("Python3 executable not found! You must install Python3 and set its PATH correctly!")
+  return
 end
 
---- check whether a feature exists in Nvim
---- @feat: string
----   the feature name, like `nvim-0.7` or `unix`.
---- return: bool
-M.has = function(feat)
-  if fn.has(feat) == 1 then
-    return true
-  end
+-- Custom mapping <leader> (see `:h mapleader` for more info)
+vim.g.mapleader = 's'
 
-  return false
+-- Enable highlighting for lua HERE doc inside vim script
+vim.g.vimsyn_embed = 'l'
+
+-- Use English as main language
+vim.cmd [[language en_US.UTF-8]]
+
+-- Disable loading certain plugins
+
+-- Whether to load netrw by default, see https://github.com/bling/dotvim/issues/4
+vim.g.loaded_netrw       = 1
+vim.g.loaded_netrwPlugin = 1
+vim.g.netrw_liststyle = 3
+if vim.g.is_win then
+  vim.g.netrw_http_cmd = "curl --ssl-no-revoke -Lo"
 end
 
---- Create a dir if it does not exist
-function M.may_create_dir(dir)
-  local res = fn.isdirectory(dir)
+-- Do not load tohtml.vim
+vim.g.loaded_2html_plugin = 1
 
-  if res == 0 then
-    fn.mkdir(dir, "p")
-  end
-end
+-- Do not load zipPlugin.vim, gzip.vim and tarPlugin.vim (all these plugins are
+-- related to checking files inside compressed files)
+vim.g.loaded_zipPlugin = 1
+vim.g.loaded_gzip = 1
+vim.g.loaded_tarPlugin = 1
 
---- Generate random integers in the range [Low, High], inclusive,
---- adapted from https://stackoverflow.com/a/12739441/6064933
---- @low: the lower value for this range
---- @high: the upper value for this range
-function M.rand_int(low, high)
-  -- Use lua to generate random int, see also: https://stackoverflow.com/a/20157671/6064933
-  math.randomseed(os.time())
+-- Do not load the tutor plugin
+vim.g.loaded_tutor_mode_plugin = 1
 
-  return math.random(low, high)
-end
+-- Do not use builtin matchit.vim and matchparen.vim since we use vim-matchup
+vim.g.loaded_matchit = 1
+vim.g.loaded_matchparen = 1
 
---- Select a random element from a sequence/list.
---- @seq: the sequence to choose an element
-function M.rand_element(seq)
-  local idx = M.rand_int(1, #seq)
-
-  return seq[idx]
-end
-
-function M.add_pack(name)
-  local status, error = pcall(vim.cmd, "packadd " .. name)
-
-  return status
-end
-
-return M
+-- Disable sql omni completion, it is broken.
+vim.g.loaded_sql_completion = 1
