@@ -13,12 +13,62 @@ vim.opt.rtp:prepend(lazypath)
 
 local plugin_specs = {
    -- Automatic insertion and deletion of a pair of characters
-    {
+  {
     'windwp/nvim-autopairs',
     event = "InsertEnter",
     opts = {} -- this is equalent to setup({}) function
-    },
-    { 'tanvirtin/monokai.nvim' }
+  },
+  { 'tanvirtin/monokai.nvim' },
+      -- Git command inside vim
+  {
+    "tpope/vim-fugitive",
+    event = "User InGitRepo",
+    config = function()
+      require("config.fugitive")
+    end,
+  },
+    -- Git command inside vim
+  {
+    "tpope/vim-fugitive",
+    event = "User InGitRepo",
+    config = function()
+      require("config.fugitive")
+    end,
+  },
+
+  -- Better git log display
+  { "rbong/vim-flog", cmd = { "Flog" } },
+  { "akinsho/git-conflict.nvim", version = "*", config = true },
+  {
+    "ruifm/gitlinker.nvim",
+    event = "User InGitRepo",
+    config = function()
+      require("config.git-linker")
+    end,
+  },
+
+  -- Show git change (change, delete, add) signs in vim sign column
+  {
+    "lewis6991/gitsigns.nvim",
+    config = function()
+      require("config.gitsigns")
+    end,
+  },
+
+  -- Better git commit experience
+  { "rhysd/committia.vim", lazy = true },
+
+  {
+    "sindrets/diffview.nvim"
+  },
+
+  {
+    "kevinhwang91/nvim-bqf",
+    ft = "qf",
+    config = function()
+      require("config.bqf")
+    end,
+  },
 }
 
 -- configuration for lazy itself.
